@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Livingston Middle School</title>
+  <link rel="icon" href="https://lms.livingstonusd.org/pics/school_logo.png" type="image/x-icon"/>
+  <style>
+    body {
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .logo {
+      width: 250px;
+      height: 200px;
+      border: 1px solid white;
+      box-shadow: 0 0 20px 5px #AD0AFD;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      box-sizing: border-box;
+      transition: all 0.7s ease;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .logo .background-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+      color: #AD0AFD;
+      opacity: 0.75;
+      pointer-events: none;
+      white-space: nowrap;
+      user-select: none;
+      z-index: 0;
+    }
+
+    .logo button:not(.game-button),
+    #returnBtn {
+      width: 200px;
+      height: 40px;
+      background-color: black;
+      color: white;
+      border: 1px solid white;
+      box-shadow: 0 0 10px 2px #AD0AFD;
+      padding: 8px 0;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s, color 0.3s, opacity 0.3s;
+      z-index: 1;
+    }
+
+    .logo button:hover,
+    #returnBtn:hover {
+      background-color: #AD0AFD;
+      color: white;
+      transform: scale(1.1) rotate(-1deg);
+    }
+
+    #returnBtn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 120px;
+      height: 32px;
+      font-size: 12px;
+      padding: 4px 0;
+      opacity: 0;
+      transition: opacity 0.6s ease, transform 0.3s ease;
+      z-index: 3;
+      pointer-events: none;
+      background-color: transparent;
+      border: 1px solid white;
+    }
+
+    #returnBtn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .expand {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .games-expand {
+      width: 85vw;
+      height: 85vh;
+    }
+
+    .border-black {
+      border-color: black;
+      box-shadow: none;
+    }
+
+    .border-white {
+      border-color: white;
+      box-shadow: 0 0 20px 5px #AD0AFD;
+    }
+
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      border: none;
+      transition: opacity 0.6s ease;
+      z-index: 1;
+    }
+
+    iframe.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Game buttons container styles */
+    .game-buttons-container {
+      display: none; /* Hidden by default */
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 30px;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    .game-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      justify-items: center;
+      padding-bottom: 40px; /* Space for the return button */
+    }
+
+    .game-button {
+      width: 150px;
+      height: 150px;
+      background-color: black;
+      color: white;
+      border: 1px solid white;
+      box-shadow: 0 0 10px 2px #AD0AFD;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+
+    .game-button:hover {
+      background-color: #AD0AFD;
+      color: white;
+      transform: scale(1.1) rotate(-1deg);
+    }
+
+    /* Custom scrollbar styles */
+    .game-buttons-container::-webkit-scrollbar {
+      width: 0px;
+    }
+
+    .game-buttons-container::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 5px;
+    }
+
+    .game-buttons-container::-webkit-scrollbar-thumb {
+      background: #AD0AFD;
+      border-radius: 5px;
+    }
+
+    .game-buttons-container::-webkit-scrollbar-thumb:hover {
+      background: #9409de;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo" id="logo">
+    <button id="search">Search</button>
+    <button id="games">Games</button>
+    <button id="suggest">Suggest</button>
+    <iframe id="hiddenIframe" src="about:blank"></iframe>
+    
+    <!-- Game buttons container (initially hidden) -->
+    <div class="game-buttons-container" id="gameButtonsContainer">
+      <div class="game-buttons-grid" id="gameButtonsGrid">
+        <!-- Game buttons will be dynamically added here -->
+      </div>
+    </div>
+  </div>
+
+  <button id="returnBtn">Return</button>
+
+  <script>
+    const logo = document.getElementById('logo');
+    const buttons = logo.querySelectorAll('button:not(.game-button)');
+    const searchButton = document.getElementById('search');
+    const gamesButton = document.getElementById('games');
+    const suggestButton = document.getElementById('suggest');
+    const iframe = document.getElementById('hiddenIframe');
+    const returnBtn = document.getElementById('returnBtn');
+    const gameButtonsContainer = document.getElementById('gameButtonsContainer');
+    const gameButtonsGrid = document.getElementById('gameButtonsGrid');
+
+    let isBusy = false;
+    let isSearchView = false;
+    let isGamesView = false;
+    let currentGameUrl = '';
+
+    suggestButton.addEventListener('click', () => {
+      buttons.forEach(btn => btn.classList.add('fade-out'));
+      launchGame('https://5vsmk5cw.forms.app/suggestion-form');
+    })
+
+    // Create the game buttons
+    function createGameButtons() {
+      // Clear existing buttons
+      gameButtonsGrid.innerHTML = '';
+      
+      // Create 14 game buttons
+      for (let i = 1; i <= 14; i++) {
+        const gameButton = document.createElement('button');
+        gameButton.className = 'game-button';
+        gameButton.style.backgroundImage = "url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Question_Mark.svg/800px-Question_Mark.svg.png')";
+        gameButton.style.backgroundSize = "cover";
+        gameButton.style.backgroundPosition = "center";
+
+        
+        if (i === 1) {
+          gameButton.style.backgroundImage = "url('https://avatars.githubusercontent.com/u/136807160?s=200&v=4')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://eaglercraft.com/mc/1.8.8/');
+          });
+        }
+        if (i === 2) {
+          gameButton.style.backgroundImage = "url('https://yt3.googleusercontent.com/OKPFuDO6MCmgJOieSXnx2N0vlGpl13J68P72MKoHaTK5cBxWFuIYO7SjaSSa0Ndmp3NHwR_b=s900-c-k-c0x00ffffff-no-rj')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://www.crazygames.com/embed/smash-karts');
+          });
+        }
+        if (i === 3) {
+          gameButton.style.backgroundImage = "url('https://images.dwncdn.net/images/t_app-icon-l/p/35ae8647-5683-4499-9955-52234ac14e09/2062050/7513_4-78266017-logo')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://advanced-channeler.02.gz-associates.com/?t=tmm-slope');
+          });
+        }
+        if (i === 4) {
+          gameButton.style.backgroundImage = "url('https://play-lh.googleusercontent.com/HUuFbIPERNbpW2Q72WIqiJ8bKDzIgT_C4PnYvMBuH0wC3B_KvpKmumm1FXhZj3jmRHw')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://bloxdio.io/gladihoppers.embed');
+          });
+        }
+        if (i === 5) {
+          gameButton.style.backgroundImage = "url('https://jklm.fun/images/icon512.png')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://jklm.fun/');
+          });
+        }
+        if (i === 6) {
+          gameButton.style.backgroundImage = "url('https://cdn-1.webcatalog.io/catalog/dino-swords/dino-swords-icon-filled-256.webp?v=1714774144043')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://dinoswords.gg/');
+          });
+        }
+        if (i === 7) {
+          gameButton.style.backgroundImage = "url('https://play-lh.googleusercontent.com/gP8T5Z1O-ngxIloiwcBZzrzyLPYDp0R_1BDNKUDZboIRPVImeyWI8-7aExvB9gAGNKc')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://www.twoplayergames.org/embed/basket-random');
+          });
+        }
+        if (i === 8) {
+          gameButton.style.backgroundImage = "url('https://static.wikia.nocookie.net/logopedia/images/9/99/Bitlife.png')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://unfortunatebook.github.io/bitlife/');
+          });
+        }
+        if (i === 9) {
+          gameButton.style.backgroundImage = "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbdnqyCU4IgHTDBa8UM0BJu51qgJtuKw2ftQ&s')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://www.crazygames.com/embed/paper-io-2');
+          });
+        }
+        if (i === 10) {
+          gameButton.style.backgroundImage = "url('https://play-lh.googleusercontent.com/QOX6mzkxDunDtaE4UY0eS6Fv3BpwYS6vSsqbeogmQdU5kzcSmYHPbyOfbY8xMrCFdyo=w240-h480-rw')"
+          gameButton.addEventListener('click', () => {
+            launchGame('www.crazygames.com/embed/space-waves');
+          });
+        }
+        if (i === 11) {
+          gameButton.style.backgroundImage = "url('https://styles.redditmedia.com/t5_3ivkr/styles/communityIcon_cva2tid2s6381.png')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://skribbl.io');
+          });
+        }
+        if (i === 12) {
+          gameButton.style.backgroundImage = "url('https://pbs.twimg.com/profile_images/1362150282809982981/gwYhEEkq_400x400.jpg')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://garticphone.com');
+          });
+        }
+        if (i === 13) {
+          gameButton.style.backgroundImage = "url('https://use.benxo.com/assets/media/icons/1v1-lol.webp')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://1v1.lol/');
+          });
+        }
+        if (i === 14) {
+          gameButton.style.backgroundImage = "url('https://play-lh.googleusercontent.com/Z1MOuuiD05ZN5LkVmMEvKF0mqAc-FknaQ2j8s4dZiO-LSPQX4EEA3RVJdlQEtxe96ok')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://unfortunatebook.github.io/Cookie-Clicker/');
+          });
+        }
+        else {
+          gameButton.addEventListener('click', () => {
+            launchGame('https://example.com/game${i}');
+          });
+        }
+        
+        gameButtonsGrid.appendChild(gameButton);
+      }
+    }
+
+    function launchGame(gameUrl) {
+      if (isBusy) return;
+      isBusy = true;
+      currentGameUrl = gameUrl;
+      
+      // Hide the game buttons
+      gameButtonsContainer.style.display = 'none';
+      
+      // Set border to black
+      setTimeout(() => {
+        logo.classList.remove('games-expand');
+        logo.classList.add('expand');
+        
+        setTimeout(() => {
+          logo.classList.add('border-black');
+          
+          // Load the game in the iframe
+          iframe.src = gameUrl;
+        }, 450);
+      }, 400);
+    }
+
+    function disableAllButtons() {
+      buttons.forEach(btn => btn.disabled = true);
+      returnBtn.disabled = true;
+      
+      // Also disable game buttons if they exist
+      const gameButtons = document.querySelectorAll('.game-button');
+      gameButtons.forEach(btn => btn.disabled = true);
+    }
+
+    function enableAllButtons() {
+      buttons.forEach(btn => btn.disabled = false);
+      returnBtn.disabled = false;
+      
+      // Also enable game buttons if they exist
+      const gameButtons = document.querySelectorAll('.game-button');
+      gameButtons.forEach(btn => btn.disabled = false);
+    }
+
+    function transitionToIframe() {
+      if (isBusy) return;
+      isBusy = true;
+      isSearchView = true;
+      isGamesView = false;
+      disableAllButtons();
+      buttons.forEach(btn => btn.classList.add('fade-out'));
+      
+      // Hide game buttons container if visible
+      gameButtonsContainer.style.display = 'none';
+      
+      setTimeout(() => {
+        logo.classList.add('expand');
+        iframe.src = "https://use.benxo.com";
+        // Set border to black after expanding
+        setTimeout(() => {
+          logo.classList.add('border-black');
+        }, 450);
+      }, 400);
+    }
+
+    function transitionToGames() {
+      if (isBusy) return;
+      isBusy = true;
+      isSearchView = false;
+      isGamesView = true;
+      currentGameUrl = '';
+      disableAllButtons();
+      buttons.forEach(btn => btn.classList.add('fade-out'));
+      
+      // Create/update game buttons
+      createGameButtons();
+      
+      setTimeout(() => {
+        logo.classList.add('games-expand');
+        
+        // Show game buttons after logo expansion starts
+        setTimeout(() => {
+          gameButtonsContainer.style.display = 'block';
+          returnBtn.classList.add('visible');
+          
+          setTimeout(() => {
+            isBusy = false;
+            enableAllButtons();
+          }, 400);
+        }, 400);
+      }, 400);
+    }
+
+    function transitionBackToLobby() {
+      if (isBusy) return;
+      isBusy = true;
+      disableAllButtons();
+      
+      // Hide return button immediately
+      returnBtn.classList.remove('visible');
+      
+      if (isSearchView || currentGameUrl) {
+        // For search view or game view, transition border back to white first
+        logo.classList.remove('border-black');
+        
+        // Then fade out the iframe
+        setTimeout(() => {
+          iframe.classList.remove('visible');
+          
+          // Wait for iframe to fade out before resetting
+          setTimeout(() => {
+            // Reset iframe
+            iframe.src = "about:blank";
+            iframe.style.pointerEvents = 'none';
+            
+            // Then shrink the logo
+            setTimeout(() => {
+              logo.classList.remove('expand');
+              
+              // If we were in games view before launching a game, return to games
+              if (isGamesView && currentGameUrl) {
+                currentGameUrl = '';
+                
+                setTimeout(() => {
+                  logo.classList.add('games-expand');
+                  gameButtonsContainer.style.display = 'block';
+                  returnBtn.classList.add('visible');
+                  
+                  setTimeout(() => {
+                    isBusy = false;
+                    enableAllButtons();
+                  }, 400);
+                }, 300);
+              } else {
+                // Otherwise return to main menu
+                setTimeout(() => {
+                  buttons.forEach(btn => btn.classList.remove('fade-out'));
+                  isBusy = false;
+                  enableAllButtons();
+                  isSearchView = false;
+                  isGamesView = false;
+                  currentGameUrl = '';
+                }, 700);
+              }
+            }, 300);
+          }, 400);
+        }, 200);
+      } else if (isGamesView) {
+        // For games view, hide game buttons first
+        gameButtonsContainer.style.display = 'none';
+        
+        setTimeout(() => {
+          logo.classList.remove('games-expand');
+          
+          setTimeout(() => {
+            buttons.forEach(btn => btn.classList.remove('fade-out'));
+            isBusy = false;
+            enableAllButtons();
+            isGamesView = false;
+          }, 500);
+        }, 300);
+      }
+    }
+
+    searchButton.addEventListener('click', transitionToIframe);
+    gamesButton.addEventListener('click', transitionToGames);
+    returnBtn.addEventListener('click', transitionBackToLobby);
+
+    iframe.addEventListener('load', () => {
+      // Only process if we're in the search/iframe view or game view
+      if (logo.classList.contains('expand') && iframe.src !== "about:blank") {
+        // Make iframe visible
+        iframe.classList.add('visible');
+        iframe.style.pointerEvents = 'auto';
+        returnBtn.classList.add('visible');
+        
+        setTimeout(() => {
+          isBusy = false;
+          enableAllButtons();
+        }, 400);
+      }
+    });
+  </script>
+</body>
+</html>
