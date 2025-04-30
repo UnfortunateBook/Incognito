@@ -14,6 +14,19 @@
       height: 100vh;
       margin: 0;
       overflow: hidden;
+      position: relative;
+    }
+
+    /* Video background styles */
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      opacity: 0.6; /* Adjust opacity as needed */
     }
 
     .logo {
@@ -32,6 +45,9 @@
       position: relative; 
       z-index: 2;
       overflow: hidden;
+      background-color: rgba(0, 0, 0, 0.5); /* More transparent background */
+      backdrop-filter: blur(10px); /* Add blur effect */
+      -webkit-backdrop-filter: blur(10px); /* Safari support */
     }
 
     .logo .background-text {
@@ -200,10 +216,16 @@
   </style>
 </head>
 <body>
+  <!-- Video background -->
+  <video class="video-background" autoplay muted loop playsinline>
+    <source src="https://static.videezy.com/system/resources/previews/000/051/683/original/200729-LoopAlphabets.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
   <div class="logo" id="logo">
     <button id="search">Search</button>
     <button id="games">Games</button>
-    <button id="suggest">Suggest</button>
+    <button id="suggest">Support</button>
     <iframe id="hiddenIframe" src="about:blank"></iframe>
     
     <!-- Game buttons container (initially hidden) -->
@@ -225,11 +247,18 @@
     const returnBtn = document.getElementById('returnBtn');
     const gameButtonsContainer = document.getElementById('gameButtonsContainer');
     const gameButtonsGrid = document.getElementById('gameButtonsGrid');
+    const videoBackground = document.querySelector('.video-background');
 
     let isBusy = false;
     let isSearchView = false;
     let isGamesView = false;
     let currentGameUrl = '';
+
+    // Ensure video plays
+    videoBackground.play().catch(error => {
+      console.log("Video autoplay error:", error);
+      // Add a play button or other fallback if needed
+    });
 
     suggestButton.addEventListener('click', () => {
       buttons.forEach(btn => btn.classList.add('fade-out'));
@@ -242,7 +271,7 @@
       gameButtonsGrid.innerHTML = '';
       
       // Create 14 game buttons
-      for (let i = 1; i <= 21; i++) {
+      for (let i = 1; i <= 28; i++) {
         const gameButton = document.createElement('button');
         gameButton.className = 'game-button';
         gameButton.style.backgroundImage = "url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Question_Mark.svg/800px-Question_Mark.svg.png')";
@@ -333,7 +362,7 @@
         if (i === 14) {
           gameButton.style.backgroundImage = "url('https://drift-boss.pro/upload/imgs/drift-boss1.png')"
           gameButton.addEventListener('click', () => {
-            launchGame('https://www.mathplayground.com/drift-boss-v3/index.html');
+            launchGame('https://html5.gamedistribution.com/rvvASMiM/0a8b51e5eaee42e7b4db83ca00afc92e/index.html?gd_sdk_referrer_url=https%3A%2F%2Fgamedistribution.com%2Fgames%2Fdrift-boss%2F&gd_zone_config=eyJwYXJlbnRVUkwiOiJodHRwczovL2dhbWVkaXN0cmlidXRpb24uY29tL2dhbWVzL2RyaWZ0LWJvc3MvIiwicGFyZW50RG9tYWluIjoiZ2FtZWRpc3RyaWJ1dGlvbi5jb20iLCJ0b3BEb21haW4iOiJnYW1lZGlzdHJpYnV0aW9uLmNvbSIsImhhc0ltcHJlc3Npb24iOmZhbHNlLCJsb2FkZXJFbmFibGVkIjp0cnVlLCJob3N0IjoiaHRtbDUuZ2FtZWRpc3RyaWJ1dGlvbi5jb20iLCJ2ZXJzaW9uIjoiMS41LjE3In0%253D');
           });
         }
         if (i === 15) {
@@ -378,9 +407,33 @@
             launchGame('https://www.crazygames.com/embed/puppet-fighter-2-player');
           });
         }
-        else {
+        if (i === 22) {
+          gameButton.style.backgroundImage = "url('https://play-lh.googleusercontent.com/Z1MOuuiD05ZN5LkVmMEvKF0mqAc-FknaQ2j8s4dZiO-LSPQX4EEA3RVJdlQEtxe96ok')"
           gameButton.addEventListener('click', () => {
-            launchGame('https://example.com/game${i}');
+            launchGame('https://mountain658.github.io/cookie/index.html');
+          });
+        }
+        if (i === 23) {
+          gameButton.style.backgroundImage = "url('https://cdn2.steamgriddb.com/icon/596525fb85c296245f55562f755de682.png')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://mountain658.github.io/g/tombofthemask/index.html');
+          });
+        }
+        if (i === 24) {
+          gameButton.style.backgroundImage = "url('https://cdn.jim-nielsen.com/ios/512/fruit-ninja-2020-08-31.png?rf=1024')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://mountain658.github.io/g/fruitninja/fruitninja.html');
+          });
+        }
+        if (i === 25) {
+          gameButton.style.backgroundImage = "url('https://files.gameshero.com/game/019/3eb/0193eb1de830502d/images/240/burritobisonrevenge.jpg')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://mountain658.github.io/g/burritobison/index.html');
+          });
+        }
+        if (i > 25) {
+          gameButton.addEventListener('click', () => {
+            alert(`Suggest a game, and it'll appear here!`)
           });
         }
         
