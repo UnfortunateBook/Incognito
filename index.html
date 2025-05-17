@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Livingston Middle School</title>
-  <link rel="icon" href="https://lms.livingstonusd.org/pics/school_logo.png" type="image/x-icon"/>
   <style>
     :root {
-  --theme-color: #FFF; /* Default theme color */
+  --theme-color: #fff; /* Default theme color */
 }
 
 * {
@@ -46,7 +44,6 @@ button {
   height: 100%;
   object-fit: cover;
   z-index: 0;
-  opacity: 0.6;
 }
 
 /* Logo container */
@@ -189,7 +186,7 @@ iframe.visible {
 }
 
 .game-buttons-grid {
-  overflow: auto;
+  overflow: none;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 10px;
@@ -333,7 +330,7 @@ iframe.visible {
 <body>
   <!-- Video background -->
   <video class="video-background" autoplay muted loop playsinline>
-    <source src="https://static.vecteezy.com/system/resources/previews/036/298/623/mp4/white-and-black-color-digital-data-flow-particles-cyber-technology-futuristic-background-glowing-white-and-black-color-digital-optical-light-rays-free-video.mp4" type="video/mp4">
+    <source src="https://unfortunatebook.github.io/Incognito/crcccc.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 
@@ -356,7 +353,7 @@ iframe.visible {
       <div class="settings-panel">
         <div class="setting-item">
           <label for="colorPicker">Theme Color:</label>
-          <input type="color" id="colorPicker" value="#AD0AFD">
+          <input type="color" id="colorPicker" value="#FFFFF">
         </div>
         <button id="resetDefaultsBtn" style="width: 100%; border-radius: 5px; height: 50px; padding: 8px 0;">Reset to Default Theme</button>
         <div class="setting-item">
@@ -421,7 +418,7 @@ function loadSettings() {
   const savedSettings = JSON.parse(localStorage.getItem('userSettings') || '{}');
   
   // Apply theme color
-  const themeColor = savedSettings.themeColor || '#AD0AFD';
+  const themeColor = savedSettings.themeColor || '#fff';
   document.documentElement.style.setProperty('--theme-color', themeColor);
   colorPicker.value = themeColor;
   
@@ -669,16 +666,8 @@ function createGameButtons() {
   // Clear existing buttons
   gameButtonsGrid.innerHTML = '';
   
-  // Game definitions - could be moved to a configuration array
-  const gameDefinitions = [
-    {url: 'https://eaglercraft.com/mc/1.8.8/', img: 'https://static.wikia.nocookie.net/logopedia/images/f/f9/Minecraft_Bedrock_icon.svg'},
-    {url: 'https://www.crazygames.com/embed/smash-karts', img: 'https://yt3.googleusercontent.com/OKPFuDO6MCmgJOieSXnx2N0vlGpl13J68P72MKoHaTK5cBxWFuIYO7SjaSSa0Ndmp3NHwR_b=s900-c-k-c0x00ffffff-no-rj'},
-    {url: 'https://advanced-channeler.02.gz-associates.com/?t=tmm-slope', img: 'https://images.dwncdn.net/images/t_app-icon-l/p/35ae8647-5683-4499-9955-52234ac14e09/2062050/7513_4-78266017-logo'},
-    // ... other games would be defined here
-  ];
-  
   // Create all game buttons (simplified example)
-  for (let i = 1; i <= 35; i++) {
+  for (let i = 1; i <= 42; i++) {
     const gameButton = document.createElement('button');
     gameButton.className = 'game-button';
     
@@ -834,9 +823,10 @@ function createGameButtons() {
           });
         }
         if (i === 25) {
-          gameButton.style.backgroundImage = "url('https://files.gameshero.com/game/019/3eb/0193eb1de830502d/images/240/burritobisonrevenge.jpg')"
+          gameButton.style.backgroundImage = "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdn4LML_BUPp_CPizuPq6VLCyI9lEecL3rhrzCrtQnn4d9RhhkdnCjC2FQi_jE9N_1QO9c')"
           gameButton.addEventListener('click', () => {
-            launchGame('https://mountain658.github.io/g/burritobison/index.html');
+            launchGame('https://en.gameslol.net/data/burrito/index.html');
+            alert('I tried 2 fix this, lmk if no work')
           });
         }
         if (i === 26) {
@@ -887,7 +877,49 @@ function createGameButtons() {
             launchGame('https://red-ball4.com/shell-shockers.play');
           });
         }
-        if (i > 33) {
+        if (i === 34) {
+          gameButton.style.backgroundImage = "url('https://www.gamenora.com/upload/games/thumbnails/The%20Binding%20of%20Isaac.webp')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://www.crazygames.com/embed/the-binding-of-isaac-demo');
+          });
+        }
+        if (i === 35) {
+          gameButton.style.backgroundImage = "url('https://imgs.crazygames.com/tag-2-3-4-players_16x9/20240403022813/tag-2-3-4-players_16x9-cover?metadata=none&quality=70&width=470')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://www.crazygames.com/embed/tag-2-3-4-players');
+          });
+        }
+        if (i === 36) {
+          gameButton.style.backgroundImage = "url('https://img.poki-cdn.com/cdn-cgi/image/quality=78,width=314,height=314,fit=cover,f=auto/3cd96c99-46c1-4ff0-b04a-82381ea07349.png')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://gswitch3.github.io/g8/the-impossible-quiz/');
+          });
+        }
+        if (i === 37) {
+          gameButton.style.backgroundImage = "url('https://play-lh.googleusercontent.com/-NQ2QLAOaafy7iHAJcrdEFk-tyVicnbwy6iLehml8K0Higi60sSVn0829bcyi1lOUw')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://littlealchemy.com');
+          });
+        }
+        if (i === 38) {
+          gameButton.style.backgroundImage = "url('https://play-lh.googleusercontent.com/3Pr4gCB3uzsYyoFZZiDOuvq_7SeQPjUQnHiUrwug154RnTGJ_YAX5zvZfCH-4r2JKBOX')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://littlealchemy2.com');
+          });
+        }
+        if (i === 39) {
+          gameButton.style.backgroundImage = "url('https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co9oz4.jpg')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://funocracy.com');
+          });
+        }
+        if (i === 40) {
+          gameButton.style.backgroundImage = "url('https://www.freegames.com/cdn-cgi/image/quality=78,format=auto/thumb/300x300/Stone-Grass.jpg')"
+          gameButton.addEventListener('click', () => {
+            launchGame('https://www.crazygames.com/embed/stone-grass-mowing-simulator');
+          });
+        }
+        if (i > 40) {
           gameButton.addEventListener('click', () => {
             alert(`Suggest a game, and it'll appear here!`)
           });
@@ -928,7 +960,7 @@ const resetDefaultsBtn = document.getElementById('resetDefaultsBtn');
 resetDefaultsBtn.addEventListener('click', function() {
   // Default settings
   const defaultSettings = {
-    themeColor: '#ffffff',
+    themeColor: '#fff',
     fontFamily: 'Arial, sans-serif',
     videoEnabled: true
   };
